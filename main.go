@@ -75,6 +75,11 @@ func main() {
 	}
 
 	for _, file := range files {
+		if !*allFilesFormat {
+			if file.Name()[0] == '.' {
+				continue
+			}
+		}
 		if *longFormat {
 			info, err := file.Info()
 			if err != nil {
@@ -86,12 +91,6 @@ func main() {
 			mode := info.Mode()
 			size := HumanFileSize(float64(info.Size()))
 
-			if !*allFilesFormat {
-				if name[0] == '.' {
-					continue
-				}
-			}
-
 			if file.IsDir() {
 				fmt.Fprintf(w, "%s/\t", name)
 			} else {
@@ -99,8 +98,11 @@ func main() {
 			}
 			fmt.Fprintf(w, "%v\t%s\n", mode, size)
 		} else {
-			fmt.Println(file.Name())
+			fmt.Print(file.Name() + "    ")
 		}
+	}
+	if !*longFormat {
+		fmt.Println()
 	}
 	w.Flush()
 }
